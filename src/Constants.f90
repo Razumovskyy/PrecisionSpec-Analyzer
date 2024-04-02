@@ -1,6 +1,6 @@
-module MyConstants
+module Constants
     implicit none
-    integer, parameter :: DP = selected_real_kind(15,  307)
+    integer, parameter :: DP = selected_real_kind(15,  307) ! selected kind for double precision
     real, parameter :: pi = 3.14159
 
     real, parameter :: SPL = 2.99792458e10
@@ -8,5 +8,5 @@ module MyConstants
     real, parameter :: AVOGADRO = 6.02214076e23
     real, parameter :: dopplerCONST = sqrt(2*AVOGADRO*BOL*log(2.)) / SPL
 
-    real, parameter :: refTemperature = 296. ! in K
-end module MyConstants
+    real, parameter :: refTemperature = 296. ! [K] -- reference temperature for HITRAN data
+end module Constants
