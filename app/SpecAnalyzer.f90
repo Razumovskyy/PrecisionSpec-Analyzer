@@ -1,27 +1,32 @@
-program MySpectra
-    use MyConstants
+program SpecAnalyzer
+    use Constants
     use IO
-    use MyAtmosphere
-    use MySpectroscopy
-    use MyShapeFuncInterface
-    use MyShapes
+    use Atmosphere
+    use Spectroscopy
+    use ShapeFuncInterface
+    use Shapes
     implicit none
     
     integer, parameter :: hitranFileUnit = 7777
-    integer, parameter :: sampleOutFileUnit = 9999
-
-    procedure(shape), pointer :: shapeFuncPtr ! pointer for implementing different line shapes functions
 
     real(kind=DP) :: gridWV ! [cm-1] -- more human-readable variable for the x-values of the spectra array
     real :: gridAbsorptionCoeff ! [km-1] -- more human readable variable for the y-values of the spectra array
+    
     integer :: startRec ! HITRAN direct access file record number, which corresponds to the first line falling in the [startWV, endWV] interval
     integer :: i, j ! loop variables
     ! ---------------------------------------------------------------------------- !   
 
-    call readInputParams
+    !! reads input from the inputConfig.ini
+    call readInputParameters
+
+    !! specifies line shape fucntion to use in calculations
+    call fetchLineShapeFunction
+    
+    !! fetches pressure, density, temperature and molar mass
     call fetchAtmosphericParameters
     call fetchMolecularParameters
 
+    !! reading from HITRAN direct access file to locate the first spectral line falling in the interval (lineWV, startRec)
     startRec = 1
     do
         open(hitranFileUnit, access='DIRECT', form='UNFORMATTED', recl=36, file=hitranFile)
@@ -31,13 +36,12 @@ program MySpectra
         startRec = startRec + 1
     end do
 
-    call allocateOutputSpectraArray
+    !! allocates resulting 2D array: (wavunumber (cm-1), absorptionCoeff (km-1)) 
+    call allocateSpectraArray
 
-    shapeFuncPtr => simpleDoppler
-    
     do i = 1, arrayLen
         write(*,*) i, ' of ', arrayLen, ' is processed'
-        spectra(i, 1) = startWV + (i-1) * step
+        spectra(i, 1) = startWV + (i-1) * calcPrecision
         gridAbsorptionCoeff = 0.
         gridWV = spectra(i, 1)
         j = startRec
@@ -57,17 +61,16 @@ program MySpectra
 
     close(hitranFileUnit)
     
+    !! writes spectra array (wavenumber, absorption coeff) to the output ASCII file
     call generateOutput
 contains
 
     real function absorptionCoeffCalc(nu, intensity, lineShape)
         real, intent(in) :: intensity ! [cm-1/(molecule*cm-2)] (refLineIntensity) -- the spectral line intensity for a single molecule per unit volume.
         real(kind=DP), intent(in) :: nu ! [cm-1],  gridWV -- spectral point where absorption coefficitent will be calculated
-        procedure(shape), pointer, intent(in) :: lineShape ! [cm] -- lineShape Function from the MyShapes module
+        procedure(shape), pointer, intent(in) :: lineShape ! [cm] -- normalized line shape function from the MyShapes module
 
         absorptionCoeffCalc = intensity * density * lineShape(nu)
     end function absorptionCoeffCalc
 
-end program MySpectra
-
-
+end program SpecAnalyzer
