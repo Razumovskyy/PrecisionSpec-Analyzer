@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 wavenumber, absorptionCoeff = np.loadtxt(fname='./ObtainedData.dat', unpack=True, delimiter=',')
-wavenumber, refAbsorptionCoeff = np.loadtxt(fname='./ReferenceData.dat', unpack=True, delimiter=' ')
+refWavenumber, refAbsorptionCoeff = np.loadtxt(fname='./ReferenceData.dat', unpack=True, delimiter=' ')
 
 fig, ax = plt.subplots()
 
 ax.plot(wavenumber, absorptionCoeff, color='b', label='Obtained data')
-ax.plot(wavenumber, refAbsorptionCoeff, color='r', label='Reference data')
+ax.plot(refWavenumber, refAbsorptionCoeff, color='r', label='Reference data')
 
 ax.set_xlabel(r'wavenumber, $\mathregular{cm^{-1}}$')
 ax.set_ylabel(r'$k,\,\mathregular{km^{-1}}$')
