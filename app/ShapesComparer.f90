@@ -67,10 +67,11 @@ program ShapesComparer
 
     call allocateLineShapesArray((baselineWV-lineCutOff), (baselineWV+lineCutOff))
 
+    ! TODO: check that line shape is not calculated twice (left and right wings are the same) -- may be redundant
     do i = 1, arrayLen
         lineShapes(i, 1) = baselineWV - lineCutOff + (i-1) * calcPrecision
-        lineShapes(i, 2) = shape1FuncPtr(lineShapes(i,1))
-        lineShapes(i, 3) = shape2FuncPtr(lineShapes(i,1))
+        lineShapes(i, 2) = shape1FuncPtr(abs(lineShapes(i,1) - lineWV))
+        lineShapes(i, 3) = shape2FuncPtr(abs(lineShapes(i,1) - lineWV))
     end do
 
     call generateOutput

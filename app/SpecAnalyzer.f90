@@ -70,7 +70,12 @@ contains
         real(kind=DP), intent(in) :: nu ! [cm-1],  gridWV -- spectral point where absorption coefficitent will be calculated
         procedure(shape), pointer, intent(in) :: lineShape ! [cm] -- normalized line shape function from the MyShapes module
 
-        absorptionCoeffCalc = intensity * density * lineShape(nu)
+        real(kind=DP) :: X
+        real(kind=DP) :: shiftedLineWV
+
+        shiftedLineWV = shiftedLinePosition(lineWV, pressure)
+        X = abs(nu - shiftedLineWV)
+        absorptionCoeffCalc = intensity * density * lineShape(X)
     end function absorptionCoeffCalc
 
 end program SpecAnalyzer
