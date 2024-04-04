@@ -43,8 +43,8 @@ contains
         select case(trim(adjustl(lineShapeFuncName)))
         case ('simpleLorentz')
             shapeFuncPtr => simpleLorentz
-        case ('simpleDoppler')
-            shapeFuncPtr => simpleDoppler
+        case ('doppler')
+            shapeFuncPtr => doppler
         end select
     end subroutine fetchLineShapeFunction
 

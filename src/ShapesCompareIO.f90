@@ -44,7 +44,7 @@ contains
         case ('simpleLorentz')
             funcPtr => simpleLorentz
         case ('simpleDoppler')
-            funcPtr => simpleDoppler
+            funcPtr => doppler
         case default
             funcPtr => null()
         end select
