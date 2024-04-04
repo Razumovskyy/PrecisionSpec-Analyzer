@@ -8,20 +8,20 @@ program ShapesComparer
     implicit none
 
     integer, parameter :: hitranFileUnit = 7777
-    procedure(shape), pointer :: shape1FuncPtr, shape2FuncPtr
-
-    integer :: loopRecNum
-    real(kind=DP) :: baselineWV
-    integer :: linesCount
-    integer :: baseRecNum
-    integer :: i
+    
+    procedure(shape), pointer :: shape1FuncPtr, shape2FuncPtr ! pointers to the line shape functions to be compared
+    real(kind=DP) :: baselineWV ! (cm-1) -- center of the considered spectroscopic line
+    
+    ! ---------------------------------------------------------------------------- !
+    character(len=20) :: baseLineWVStr, startWVStr, endWVStr ! string representation of the baseline 
+    integer :: linesCount ! number of the liens in the interval [startWV, endWV]
+    integer :: i, loopRecNum ! loop variables
     ! ---------------------------------------------------------------------------- !  
 
     !! reads input from the inputConfig.ini
     call readInputParameters
-    ! write(*,*) outputShapeFile
-    ! pause
 
+    !! specifies line shapes functions to be compared
     shape1FuncPtr => getLineShapeFunction(lineShape1FuncName)
     shape2FuncPtr => getLineShapeFunction(lineShape2FuncName)
 
@@ -32,38 +32,42 @@ program ShapesComparer
     !! reading from HITRAN direct access file to locate the first spectral line falling in the interval (lineWV, startRec)
     loopRecNum = 1
     linesCount = 0
-    ! write(*,*) lineWV, startWV, endWV
-    ! pause
+
     do
+        ! write(*,*) loopRecNum
         open(hitranFileUnit, access='DIRECT', form='UNFORMATTED', recl=36, file=hitranFile)
         read(hitranFileUnit, rec=loopRecNum) lineWV, refLineIntensity, gammaForeign, gammaSelf, &
                                         lineLowerState, foreignTempCoeff, jointMolIso, deltaForeign
         if ((lineWV > startWV) .and. (lineWV < endWV)) then
-            baselineWV = lineWV
-            baseRecNum = loopRecNum
+            ! write(*,*) lineWV
+            ! pause
             linesCount = linesCount + 1
-        end if
-        if (linesCount > 1) then
-            write(*,*) 'More than one lines found in the interval. & 
-                        Exited the loop and selected the first line'
-            exit
+            if (linesCount > 1) then
+                write(baseLineWVStr, '(F10.5)') baselineWV
+                write(*,'(3A)') 'More than one line found in the interval from the input. ', &
+                                'Selected the first line: ' // trim(adjustl(baseLineWVStr)) &
+                                // ' cm-1'
+                exit
+            end if
+            baselineWV = lineWV
         end if
         if (lineWV > endWV) exit
         loopRecNum = loopRecNum + 1
     end do
 
-    write(*,*) 'baselineWV: ', baselineWV
-    write(*,*) 'baserecNum: ', baseRecNum
-    ! pause
+    close(hitranFileUnit)
+
+    if (linesCount == 0) then
+        write(startWVStr, '(F10.5)') startWV
+        write(endWVStr, '(F10.5)') endWV
+        write(*,'(2A)') 'Error: no lines found in the interval: ' // trim(adjustl(startWVStr)), &
+                    ' and ' // trim(adjustl(endWVStr))
+        error stop
+    end if
 
     call allocateLineShapesArray((baselineWV-lineCutOff), (baselineWV+lineCutOff))
 
-    read(hitranFileUnit, rec=baseRecNum) lineWV, refLineIntensity, gammaForeign, gammaSelf, &
-                                    lineLowerState, foreignTempCoeff, jointMolIso, deltaForeign
-    close(hitranFileUnit)
-
     do i = 1, arrayLen
-        ! write(*,*) i, ' of ', arrayLen, ' is processed'
         lineShapes(i, 1) = baselineWV - lineCutOff + (i-1) * calcPrecision
         lineShapes(i, 2) = shape1FuncPtr(lineShapes(i,1))
         lineShapes(i, 3) = shape2FuncPtr(lineShapes(i,1))

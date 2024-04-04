@@ -61,11 +61,12 @@ contains
         open(outputFileUnit, file=outputShapeFile)
 
         do k = 1, arrayLen
-            write(outputFileUnit, '(F8.3, ", ", E20.14, ", ", E20.14)') &
+            write(outputFileUnit, '(F10.5, ", ", E20.14, ", ", E20.14)') &
             lineShapes(k,1), lineShapes(k,2), lineShapes(k,3)
         end do
 
         close(outputFileUnit)
         deallocate(lineShapes)
+        write(*,*) 'Success !!!'
     end subroutine generateOutput
 end module CompareIO
