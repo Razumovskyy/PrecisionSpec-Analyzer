@@ -25,22 +25,13 @@ contains
         shiftedLinePosition = lineWVParameter + deltaForeign * pressureParameter
     end function shiftedLinePosition
 
-    real function dopplerHWHM(lineWVParameter, temperatureParameter, molarMassParameter, shiftedLineCenter)
+    real function dopplerHWHM(lineWVParameter, temperatureParameter, molarMassParameter)
         real(kind=DP), intent(in) :: lineWVParameter
         real, intent(in) :: temperatureParameter
         real, intent(in) :: molarMassParameter
-        logical, optional, intent(in) :: shiftedLineCenter
 
-        logical :: isShifted
-        isShifted = .true.
-        if (present(shiftedLineCenter)) isShifted = shiftedLineCenter
-
-        if (isShifted) then
-            dopplerHWHM = dopplerCONST * shiftedLinePosition(lineWVParameter, pressure) * &
+        dopplerHWHM = dopplerCONST * shiftedLinePosition(lineWVParameter, pressure) * &
                 sqrt(temperatureParameter / molarMassParameter)
-        else
-            dopplerHWHM = dopplerCONST * lineWVParameter * sqrt(temperatureParameter / molarMassParameter)
-        end if
 
     end function dopplerHWHM
 
