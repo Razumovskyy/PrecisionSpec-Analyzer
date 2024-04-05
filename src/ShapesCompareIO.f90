@@ -43,8 +43,9 @@ contains
         select case(trim(adjustl(name)))
         case ('simpleLorentz')
             funcPtr => simpleLorentz
-        case ('simpleDoppler')
+        case ('doppler')
             funcPtr => doppler
+        ! TODO: add flow for the incorrect line shape names input (Segmentaion fault otherwise)
         case default
             funcPtr => null()
         end select

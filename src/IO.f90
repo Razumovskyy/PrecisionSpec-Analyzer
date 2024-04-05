@@ -40,6 +40,7 @@ contains
     !! If you introduce custom line shape function, you need to add
     !! another case statement in this section
     subroutine fetchLineShapeFunction()
+        ! TODO: add flow for the incorrect line shape input
         select case(trim(adjustl(lineShapeFuncName)))
         case ('simpleLorentz')
             shapeFuncPtr => simpleLorentz

@@ -34,13 +34,10 @@ program ShapesComparer
     linesCount = 0
 
     do
-        ! write(*,*) loopRecNum
         open(hitranFileUnit, access='DIRECT', form='UNFORMATTED', recl=36, file=hitranFile)
         read(hitranFileUnit, rec=loopRecNum) lineWV, refLineIntensity, gammaForeign, gammaSelf, &
                                         lineLowerState, foreignTempCoeff, jointMolIso, deltaForeign
         if ((lineWV > startWV) .and. (lineWV < endWV)) then
-            ! write(*,*) lineWV
-            ! pause
             linesCount = linesCount + 1
             if (linesCount > 1) then
                 write(baseLineWVStr, '(F10.5)') baselineWV
@@ -73,6 +70,5 @@ program ShapesComparer
         lineShapes(i, 2) = shape1FuncPtr(abs(lineShapes(i,1) - lineWV))
         lineShapes(i, 3) = shape2FuncPtr(abs(lineShapes(i,1) - lineWV))
     end do
-
     call generateOutput
 end program ShapesComparer
