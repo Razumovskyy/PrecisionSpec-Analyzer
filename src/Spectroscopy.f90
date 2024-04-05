@@ -35,21 +35,44 @@ contains
 
     end function dopplerHWHM
 
-    real function lorentzHWHM(pressureParameter, temperatureParameter, temperatureDependent)
-        ! TODO: add partial pressure logic (p_self, p_air)
+    real function lorentzHWHM(pressureParameter, includeGammaSelf, partialPressureParameter, & 
+                                includeTemperature, temperatureParameter)
+        ! TODO: add check if includeTemperature=true but not passed as an argument
         real, intent(in) :: pressureParameter
-        real, intent(in) :: temperatureParameter
-        logical, optional, intent(in) :: temperatureDependent
+        logical, optional, intent(in) :: includeGammaSelf, includeTemperature
+        real, optional, intent(in) :: partialPressureParameter
+        real, optional, intent(in) :: temperatureParameter
+        
+        logical :: isIncludeGammaSelf, isIncludeTemperature
+        
+        ! defaults:
+        isIncludeGammaSelf = .false.   ! do not count p_self, and gamma_self
+        isIncludeTemperature = .false. ! no temperature dependency: temperature is set to 296 K
+        
+        if (present(includeTemperature)) isincludeTemperature = includeTemperature
+        if (present(includeGammaSelf)) isIncludeGammaSelf = includeGammaSelf
 
-        logical :: isTemperatureDependent
-        isTemperatureDependent = .false.
-        if (present(temperatureDependent)) isTemperatureDependent = temperatureDependent
-
-        if (.not. isTemperatureDependent) then
+        if (.not. isIncludeGammaSelf .and. .not. isIncludeTemperature) then
             ! temperature is set to 296 K and partial pressure is not counted
             lorentzHWHM = gammaForeign * pressureParameter
-        else
+        end if
+        
+        if (isIncludeGammaSelf .and. .not. isIncludeTemperature) then
+            ! temperature is set to 296 K and partial pressure included
+            lorentzHWHM = gammaForeign * (pressureParameter - partialPressureParameter) + &
+                            gammaSelf * partialPressureParameter
+        end if
+
+        if (.not. isIncludeGammaSelf .and. isIncludeTemperature) then
+            ! temperature dependence is present, but partial pressure not included
             lorentzHWHM = ((temperatureParameter / refTemperature)**foreignTempCoeff) * (gammaForeign * pressureParameter)
+        end if
+
+        if (isIncludeGammaSelf .and. isIncludeTemperature) then
+            ! full formula (6) from HITRAN docs 
+            lorentzHWHM = ((temperatureParameter / refTemperature)**foreignTempCoeff) * &
+                            (gammaForeign * (pressureParameter - partialPressureParameter) + &
+                            gammaSelf * partialPressureParameter)
         end if
     end function lorentzHWHM
 

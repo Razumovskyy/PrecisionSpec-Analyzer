@@ -12,7 +12,7 @@ contains
         
         real(kind=DP) :: HWHM
 
-        HWHM = lorentzHWHM(pressure, temperature, temperatureDependent=.false.)
+        HWHM = lorentzHWHM(pressure, includeGammaSelf=.false., includeTemperature=.false.)
         simpleLorentz = HWHM / (pi*(X**2 + HWHM**2))
     end function simpleLorentz
 
