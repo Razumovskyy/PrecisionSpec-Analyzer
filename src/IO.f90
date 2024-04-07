@@ -3,8 +3,13 @@ module IO
     use ShapeFuncInterface
     use Shapes    
     implicit none
+    ! TODO: keep here only those variables to be shared accross
+    ! move subroutine-specific vars to the corresponding subroutines
     integer, parameter :: inputConfigUnit = 6663
     character(len=29), parameter :: inputConfigFile = 'inputConfig.ini'
+
+    integer, parameter :: TIPSUnit = 5467
+    character(len=30), parameter :: TIPSFile = 'data/QofT_formatted.dat'
     
     integer, parameter :: outputFileUnit = 7778
     
@@ -12,6 +17,8 @@ module IO
 
     integer :: arrayLen ! length of the spectra array
     integer :: k ! loop variable
+    
+    real, allocatable :: TIPS(:,:) ! TIPS array (Total internal partition sums)
 
     ! ---------------------------------------------------------------------------- !
     ! INPUT PARAMETERS !
@@ -48,6 +55,20 @@ contains
             shapeFuncPtr => doppler
         end select
     end subroutine fetchLineShapeFunction
+
+    subroutine readTIPS()
+        implicit none 
+        integer :: numIsotopes, numTemperatures
+        integer :: temperatureIdx, isotopeIdx
+        ! ------------------------------------ !
+        open(unit=TIPSUnit, file=TIPSFile, status='old', action='read')
+        read(TIPSUnit, *) numIsotopes, numTemperatures
+        allocate(TIPS(numIsotopes, numTemperatures))
+        do isotopeIdx = 1, numIsotopes
+            read(TIPSUnit, *) (TIPS(isotopeIdx, temperatureIdx), temperatureIdx=1, numTemperatures)
+        end do
+        close(TIPSUnit)
+    end subroutine readTIPS
 
     subroutine allocateSpectraArray()
         arrayLen = int((endWV-startWV) / calcPrecision) + 1

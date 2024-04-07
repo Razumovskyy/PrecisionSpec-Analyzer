@@ -21,6 +21,9 @@ program SpecAnalyzer
 
     !! specifies line shape fucntion to use in calculations
     call fetchLineShapeFunction
+
+    !! reads TIPS from the input file
+    call readTIPS
     
     !! fetches pressure, density, temperature and molar mass
     call fetchAtmosphericParameters
@@ -52,7 +55,7 @@ program SpecAnalyzer
             if (lineWV >= endWV + lineCutOff) exit
             if (abs(lineWV - gridWV) < lineCutOff) then
                 gridAbsorptionCoeff = gridAbsorptionCoeff + &
-                                    absorptionCoeffCalc(gridWV, refLineIntensity, shapeFuncPtr)
+                                    absorptionCoeffCalc(gridWV, temperature, shapeFuncPtr)
             end if
             j = j + 1
         spectra(i, 2) = gridAbsorptionCoeff
@@ -65,16 +68,37 @@ program SpecAnalyzer
     call generateOutput
 contains
 
-    real function absorptionCoeffCalc(nu, intensity, lineShape)
-        real, intent(in) :: intensity ! [cm-1/(molecule*cm-2)] (refLineIntensity) -- the spectral line intensity for a single molecule per unit volume.
+    real function absorptionCoeffCalc(nu, temperatureParameter, lineShape)
+        real, intent(in) :: temperatureParameter ! [K] -- temperature at the current atmospheric level
         real(kind=DP), intent(in) :: nu ! [cm-1],  gridWV -- spectral point where absorption coefficitent will be calculated
         procedure(shape), pointer, intent(in) :: lineShape ! [cm] -- normalized line shape function from the MyShapes module
-
+        ! --------------------------------------------------- !
         real(kind=DP) :: X
         real(kind=DP) :: shiftedLineWV
+        real :: intensity ! [cm-1/(molecule*cm-2)] (refLineIntensity) -- the spectral line intensity for a single molecule per unit volume.
+        real :: TIPSFactor, boltzmannFactor, emissionFactor
+        real :: TIPSOfT
+        real :: TIPSOfRefT
+        integer :: NTAB_G
+        real :: C_G1, C_G2
+        real :: t_G1
+        integer :: isotopeNum
 
         shiftedLineWV = shiftedLinePosition(lineWV, pressure)
         X = abs(nu - shiftedLineWV)
+
+        NTAB_G = (temperatureParameter - 20.0) / 2 + 1
+        t_G1 = NTAB_G * 2.0 + 18.
+        C_G2 = (temperatureParameter - t_G1)/2.
+        C_G1 = 1. - C_G2
+        TIPSOfT = C_G1 * TIPS(isotopeNum, NTAB_G) + C_G2 * TIPS(isotopeNum, NTAB_G+1)
+        TIPSOfRefT = TIPS(isotopeNum, 139)
+
+        TIPSFactor = TIPSOfT / TIPSOfRefT
+        boltzmannFactor = exp(-C2*lineLowerState/temperatureParameter) / exp(-C2*lineLowerState/refTemperature)
+        emissionFactor = (1 - exp(-C2*lineWV/temperatureParameter)) / (1 - exp(-C2*lineWV/refTemperature))
+
+        intensity = refLineIntensity * TIPSFactor * boltzmannFactor * emissionFactor
         absorptionCoeffCalc = intensity * density * lineShape(X)
     end function absorptionCoeffCalc
 
