@@ -52,6 +52,14 @@ contains
         if (present(includeTemperature)) isincludeTemperature = includeTemperature
         if (present(includeGammaSelf)) isIncludeGammaSelf = includeGammaSelf
 
+        ! TODO: rewrite using select case: use integer indicator which is mapped to two bool variables:
+        ! if (isIncludeGammaSelf) then
+        !     caseIndex = caseIndex + 2
+        ! endif
+        ! if (isIncludeTemperature) then
+        !     caseIndex = caseIndex + 1
+        ! endif
+
         if (.not. isIncludeGammaSelf .and. .not. isIncludeTemperature) then
             ! temperature is set to 296 K and partial pressure is not counted
             lorentzHWHM = gammaForeign * pressureParameter
