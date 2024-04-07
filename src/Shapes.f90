@@ -27,7 +27,7 @@ contains
         ! -------------------------------------------------------- !
         real(kind=DP) :: HWHM
 
-        HWHM = lorentzHWHM(pressure, includeGammaSelf=.true., includeTemperature=.false.)
+        HWHM = lorentzHWHM(pressure, includeGammaSelf=.true., partialPressureParameter=pSelf, includeTemperature=.false.)
         selfSimpleLorentz = HWHM / (pi*(X**2 + HWHM**2))
     end function selfSimpleLorentz
 
@@ -40,20 +40,22 @@ contains
         ! -------------------------------------------------------- !
         real(kind=DP) :: HWHM
 
-        HWHM = lorentzHWHM(pressure, includeGammaSelf=.true., includeTemperature=.true., temperatureParameter=temperature)
+        HWHM = lorentzHWHM(pressure, includeGammaSelf=.false., includeTemperature=.true., temperatureParameter=temperature)
         noSelfLorentz = HWHM / (pi*(X**2 + HWHM**2))
     end function noSelfLorentz
 
     real function lorentz(X)
         !! 
-        ! Temperature-dependent Lorentz line shape with no account for self-broadening
+        ! Full-scale Lorentz shape calculation
+        ! Temperature-dependent Lorentz line shape with self-broadening included
         !!
         ! X - [cm-1] -- distance from the shifted line center to the spectral point in which the total contribution from lines is calculated
         real(kind=DP), intent(in) :: X
         ! -------------------------------------------------------- !
         real(kind=DP) :: HWHM
 
-        HWHM = lorentzHWHM(pressure, includeGammaSelf=.true., includeTemperature=.true., temperatureParameter=temperature)
+        HWHM = lorentzHWHM(pressure, includeGammaSelf=.true., partialPressureParameter=pSelf, & 
+                            includeTemperature=.true., temperatureParameter=temperature)
         lorentz = HWHM / (pi*(X**2 + HWHM**2))
     end function lorentz
 
