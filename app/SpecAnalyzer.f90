@@ -22,7 +22,7 @@ program SpecAnalyzer
     !! specifies line shape fucntion to use in calculations
     call fetchLineShapeFunction
 
-    !! reads TIPS from the input file
+    !! reads TIPS from the input file and allocates TIPS array
     call readTIPS
     
     !! fetches pressure, density, temperature and molar mass
@@ -87,6 +87,7 @@ contains
         shiftedLineWV = shiftedLinePosition(lineWV, pressure)
         X = abs(nu - shiftedLineWV)
 
+        isotopeNum = jointMolIso / 100
         NTAB_G = (temperatureParameter - 20.0) / 2 + 1
         t_G1 = NTAB_G * 2.0 + 18.
         C_G2 = (temperatureParameter - t_G1)/2.

@@ -23,7 +23,7 @@ module IO
     ! ---------------------------------------------------------------------------- !
     ! INPUT PARAMETERS !
     character(len=20) :: hitranFile
-    character(len=22) :: outputFile
+    character(len=30) :: outputFile
     real(kind=DP) :: startWV, endWV, calcPrecision ! [cm-1] -- boundaries and grid calcPrecision for the spectral interval for calculating spectra 
     real(kind=DP) :: lineCutOff ! [cm-1] -- line cut-off (measured from the line center)
     character(len=30) :: lineShapeFuncName ! name of the line shape function (custom or standard)
@@ -37,7 +37,7 @@ contains
     subroutine readInputParameters()
         open(unit=inputConfigUnit, file=inputConfigFile, status='old', action='read')
         read(inputConfigUnit, '(A20)') hitranFile
-        read(inputConfigUnit, '(A22)') outputFile
+        read(inputConfigUnit, '(A30)') outputFile
         read(inputConfigUnit, *) startWV, endWV, calcPrecision
         read(inputConfigUnit, *) lineCutOff
         read(inputConfigUnit, '(A30)') lineShapeFuncName
@@ -49,10 +49,16 @@ contains
     subroutine fetchLineShapeFunction()
         ! TODO: add flow for the incorrect line shape input
         select case(trim(adjustl(lineShapeFuncName)))
-        case ('simpleLorentz')
-            shapeFuncPtr => simpleLorentz
+        case ('lorentz')
+            shapeFuncPtr => lorentz
         case ('doppler')
             shapeFuncPtr => doppler
+        case ('simpleLorentz')
+            shapeFuncPtr => simpleLorentz
+        case ('selfSimpleLorentz')
+            shapeFuncPtr => selfSimpleLorentz
+        case ('noSelfLorentz')
+            shapeFuncPtr => noSelfLorentz
         end select
     end subroutine fetchLineShapeFunction
 
