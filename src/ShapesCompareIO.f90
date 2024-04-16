@@ -46,6 +46,10 @@ contains
         case ('doppler')
             funcPtr => doppler
         ! TODO: add flow for the incorrect line shape names input (Segmentaion fault otherwise)
+        case ('lorentz')
+            funcPtr => lorentz
+        case ('voigt')
+            funcPtr => voigt
         case default
             funcPtr => null()
         end select

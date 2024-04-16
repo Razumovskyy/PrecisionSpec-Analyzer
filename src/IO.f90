@@ -59,6 +59,8 @@ contains
             shapeFuncPtr => selfSimpleLorentz
         case ('noSelfLorentz')
             shapeFuncPtr => noSelfLorentz
+        case ('voigt')
+            shapeFuncPtr => voigt
         end select
     end subroutine fetchLineShapeFunction
 

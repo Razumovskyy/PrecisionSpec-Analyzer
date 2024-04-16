@@ -74,10 +74,12 @@ contains
         real(kind=DP), intent(in) :: X
         ! -------------------------------------------------------- !
         real(kind=DP) :: dopHWHM, lorHWHM
-        real(kind=DP) :: XX, YY
-        real(kind=DP) :: X2, Y1, Y2, Y_2, Y3
+        real(kind=DP) :: XX, YY, X2
+        real(kind=DP) :: Y1=0, Y2=0, Y3=0
+        real(kind=DP) :: Y_2
         real(kind=DP) :: A1, B1, A2, B2, A3, B3, C3, D3, A4, B4, C4, D4, A5, B5, C5, D5, E5, &
                             A6, B6, C6, D6, E6
+        save A1, A2, A3, A4, A5, A6, B1, B2, B3, B4, B5, B6, C3, C4, C5, C6, D3, D4, D5, D6, E5, E6
         
         dopHWHM = dopplerHWHM(lineWV, temperature, molarMass)
         lorHWHM = lorentzHWHM(pressure, includeGammaSelf=.true., partialPressureParameter=pSelf, &
@@ -98,11 +100,11 @@ contains
             ! Region 1
             if (YY /= Y1) then
                 Y1 = YY
-                Y2 = Y1 ** 2
-                A1 = (0.2820948 + 0.5641896*Y2) * Y1
+                Y_2 = Y1 ** 2
+                A1 = (0.2820948 + 0.5641896*Y_2) * Y1
                 B1 = 0.5641896 * Y1
-                A2 = 0.25 + Y2 + Y2**2
-                B2 = Y2 + Y2 - 1.
+                A2 = 0.25 + Y_2 + Y_2**2
+                B2 = Y_2 + Y_2 - 1.
             end if
             voigt = (A1 + B1*X2) / (A2 + B2*X2 + X2**2) * sqrt(pi) / dopHWHM
         else
@@ -120,7 +122,7 @@ contains
                     C4 = 10.5+6.0*(Y_2-1.0)*Y_2
                     D4 = 4.0*Y_2-6.0
                 end if 
-                voigt = (((D3*X2+C3)*X2+B3)*X2+A3) / ((((X2+D4)*X2+C4)*X2+B4)*X2+A4)
+                voigt = (((D3*X2+C3)*X2+B3)*X2+A3) / ((((X2+D4)*X2+C4)*X2+B4)*X2+A4) * sqrt(pi) / dopHWHM
             else
                 ! IF(Y >= 0.195*X-0.176)THEN ! Region 3 in accordance with Kuntz
                 if (XX <= 1.0 .OR. YY >= 0.02) then 
