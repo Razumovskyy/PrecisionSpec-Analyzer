@@ -69,6 +69,28 @@ contains
         doppler = sqrt(log(2.) / (pi * HWHM**2)) * exp(-(X/HWHM)**2 * log(2.))
     end function doppler
 
+    real function tonkov(X)
+        ! X - [cm-1] -- distance from the shifted line center to the spectral point in which the total contribution from lines is calculated
+        real(kind=DP), intent(in) :: X
+        ! -------------------------------------------------------- !
+        real(kind=DP) :: shiftedLineWV
+
+        shiftedLineWV = shiftedLinePosition(lineWV, pressure)
+        if (molType == 2) then
+            if (shiftedLineWV > 3750 .and. shiftedLineWV < 4700. .and. abs(X) > 3.) then
+                if (abs(X) <= 150.) then
+                    tonkov = lorentz(X) * 1.084 * exp(-0.027*abs(X))
+                else
+                    tonkov = lorentz(X) * 0.208 * exp(-0.016*abs(X))
+                end if
+            end if
+            return
+        else
+            tonkov = lorentz(X)
+            return
+        end if
+    end function tonkov
+
     real function voigt(X)
         ! X - [cm-1] -- distance from the shifted line center to the spectral point in which the total contribution from lines is calculated
         real(kind=DP), intent(in) :: X
