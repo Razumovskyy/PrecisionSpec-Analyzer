@@ -50,6 +50,8 @@ contains
             funcPtr => lorentz
         case ('voigt')
             funcPtr => voigt
+        case ('tonkov')
+            funcPtr => tonkov
         case default
             funcPtr => null()
         end select

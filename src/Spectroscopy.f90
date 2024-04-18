@@ -11,11 +11,13 @@ module Spectroscopy
     integer :: jointMolIso ! [dimensionless] custom variable: joined reference to Molecule number (MOL) and Isotopologue number (ISO)
     real :: deltaForeign ! [cm-1/atm] (pressure shift of the line position at 296 K and 1 atm)
     real :: molarMass ! [g/mol] -- current species molar mass
+    integer :: molType ! to define type of the molecule : 2 -CO2, 1 -H2O, 0 -other
 
 contains
  
     subroutine fetchMolecularParameters()
         molarMass = 18. 
+        molType = 1
     end subroutine fetchMolecularParameters
     
     real(kind=DP) function shiftedLinePosition(lineWVParameter, pressureParameter)
