@@ -76,6 +76,7 @@ contains
         real(kind=DP) :: shiftedLineWV
 
         shiftedLineWV = shiftedLinePosition(lineWV, pressure)
+        tonkov = lorentz(X)
         if (molType == 2) then
             if (shiftedLineWV > 3750 .and. shiftedLineWV < 4700. .and. abs(X) > 3.) then
                 if (abs(X) <= 150.) then
@@ -84,9 +85,6 @@ contains
                     tonkov = lorentz(X) * 0.208 * exp(-0.016*abs(X))
                 end if
             end if
-            return
-        else
-            tonkov = lorentz(X)
             return
         end if
     end function tonkov
