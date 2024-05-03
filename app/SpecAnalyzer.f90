@@ -95,7 +95,7 @@ contains
         TIPSOfT = C_G1 * TIPS(isotopeNum, NTAB_G) + C_G2 * TIPS(isotopeNum, NTAB_G+1)
         TIPSOfRefT = TIPS(isotopeNum, 139)
 
-        TIPSFactor = TIPSOfT / TIPSOfRefT
+        TIPSFactor = TIPSOfRefT / TIPSOfT
         boltzmannFactor = exp(-C2*lineLowerState/temperatureParameter) / exp(-C2*lineLowerState/refTemperature)
         emissionFactor = (1 - exp(-C2*lineWV/temperatureParameter)) / (1 - exp(-C2*lineWV/refTemperature))
 
