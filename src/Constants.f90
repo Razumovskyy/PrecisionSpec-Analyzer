@@ -8,6 +8,8 @@ module Constants
     real, parameter :: BOL = 1.3806503e-16 ! [erg/K] -- Boltzmann constant
     real, parameter :: AVOGADRO = 6.02214076e23
     real, parameter :: PLANCK = 6.626070e-27 ! [erg*s]
+    real, parameter :: LOSCHMIDT = 2.6867811e25 ! [1/m^3]
+    real, parameter :: stTemperature = 273.15 ! [K]
     ! ----------------------------------------------------------------- !
     real, parameter :: C2 = (PLANCK * SPL / BOL) ! [cm*K] -- second radiational constant
     ! ----------------------------------------------------------------- !
