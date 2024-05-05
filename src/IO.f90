@@ -53,12 +53,12 @@ contains
             shapeFuncPtr => lorentz
         case ('doppler')
             shapeFuncPtr => doppler
-        case ('simpleLorentz')
-            shapeFuncPtr => simpleLorentz
-        case ('selfSimpleLorentz')
-            shapeFuncPtr => selfSimpleLorentz
-        case ('noSelfLorentz')
-            shapeFuncPtr => noSelfLorentz
+        ! case ('simpleLorentz')
+        !     shapeFuncPtr => simpleLorentz
+        ! case ('selfSimpleLorentz')
+        !     shapeFuncPtr => selfSimpleLorentz
+        ! case ('noSelfLorentz')
+        !     shapeFuncPtr => noSelfLorentz
         case ('voigt')
             shapeFuncPtr => voigt
         case ('tonkov')

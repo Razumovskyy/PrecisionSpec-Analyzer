@@ -41,8 +41,8 @@ contains
         procedure(shape), pointer :: funcPtr
     
         select case(trim(adjustl(name)))
-        case ('simpleLorentz')
-            funcPtr => simpleLorentz
+        ! case ('simpleLorentz')
+        !     funcPtr => simpleLorentz
         case ('doppler')
             funcPtr => doppler
         ! TODO: add flow for the incorrect line shape names input (Segmentaion fault otherwise)
