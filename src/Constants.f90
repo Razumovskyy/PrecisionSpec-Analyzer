@@ -5,7 +5,7 @@ module Constants
 
     ! CGS system is used
     real, parameter :: SPL = 2.99792458e10 ! [cm/s] -- speed of light
-    real, parameter :: BOL = 1.3806503e-16 !
+    real, parameter :: BOL = 1.3806503e-16 ! [erg/K] -- Boltzmann constant
     real, parameter :: AVOGADRO = 6.02214076e23
     real, parameter :: PLANCK = 6.626070e-27 ! [erg*s]
     ! ----------------------------------------------------------------- !
@@ -13,4 +13,5 @@ module Constants
     ! ----------------------------------------------------------------- !
     real, parameter :: dopplerCONST = sqrt(2*AVOGADRO*BOL*log(2.)) / SPL
     real, parameter :: refTemperature = 296. ! [K] -- reference temperature for HITRAN data
+    real, parameter :: sqln2 = sqrt(log(2.))
 end module Constants
