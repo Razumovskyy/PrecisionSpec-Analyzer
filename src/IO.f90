@@ -89,7 +89,7 @@ contains
         open(outputFileUnit, file=outputFile)
 
         do k = 1, arrayLen
-            write(outputFileUnit, '(F8.3, ", ", E20.14)') spectra(k,1), spectra(k, 2)
+            write(outputFileUnit, '(E20.14, ", ", E20.14)') spectra(k,1), spectra(k, 2)
         end do
 
         close(outputFileUnit)
